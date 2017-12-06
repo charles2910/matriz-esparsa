@@ -1,0 +1,37 @@
+#ifndef MATRIZ_ESPARSA_H
+#define MATRIZ_ESPARSA_H
+
+typedef struct particula {
+    int linha;
+    int coluna;
+    double valor;
+    struct particula *prox_linha;
+    struct particula *prox_coluna;
+} NO;
+ 
+typedef struct matriz {
+    NO *inicio;
+    int nr_linhas;
+    int nr_colunas;
+} MATRIZ_ESPARSA ;
+
+
+
+MATRIZ_ESPARSA *criar_matriz (int nr_linhas, int nr_colunas);  //FUNCIONANDO
+
+void apagar_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO
+int set_matriz (MATRIZ_ESPARSA *matriz, int linha, int coluna, double valor);  //FUNCIONANDO
+double get_matriz(MATRIZ_ESPARSA *matriz, int linha, int coluna);  //FUNCIONANDO
+
+MATRIZ_ESPARSA *somar_matriz (MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2);
+MATRIZ_ESPARSA *multiplicar_matriz (MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2);
+double soma_mult(NO *p_aux1, NO *p_aux2, NO *m1, NO *m2);  //funcao auxiliar
+MATRIZ_ESPARSA *transposta_matriz (MATRIZ_ESPARSA *matriz);
+
+double determinante_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO ateh ordem 4
+void print_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO
+void resumo_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO
+
+MATRIZ_ESPARSA *ler_matriz (const char nome[]);
+
+#endif

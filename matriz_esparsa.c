@@ -4,7 +4,7 @@
 
 
 
-MATRIZ_ESPARSA *criar_matriz (int nr_linhas, int nr_colunas) //NOVO CODIGO
+MATRIZ_ESPARSA *criar_matriz(int nr_linhas, int nr_colunas) //NOVO CODIGO
 {
     NO *proximaLinha = NULL, *proximaColuna = NULL;  //guardarao endereco do ultimo noh criado
 
@@ -62,7 +62,7 @@ MATRIZ_ESPARSA *criar_matriz (int nr_linhas, int nr_colunas) //NOVO CODIGO
 
 
 
-void apagar_matriz (MATRIZ_ESPARSA *matriz)
+void apagar_matriz(MATRIZ_ESPARSA *matriz)
 {
    	NO *proximaColuna = NULL , *proximaLinha = NULL;  //armazenarao o endereco das proximas coluna e linha respctivamente
 
@@ -93,7 +93,7 @@ void apagar_matriz (MATRIZ_ESPARSA *matriz)
 
 }
 
-int set_matriz (MATRIZ_ESPARSA *matriz, int linha, int coluna, double valor)
+int set_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna, double valor)
 {
     int ind_coluna, ind_linha;  //indicadores de coluna e linha
    	NO *coluna_atual, *linha_atual;
@@ -149,7 +149,7 @@ int set_matriz (MATRIZ_ESPARSA *matriz, int linha, int coluna, double valor)
                	NO *linha_atual_aux,*coluna_atual_aux;
           
                	linha_atual_aux = matriz->inicio->prox_linha;  //coluna_atual recebe o end. da coluna
-               	ind_linha_aux = linha_atual_aux->linha;  //ind_coluna recebe em q coluna coluna_atual esta
+               	/*ind_linha_aux = linha_atual_aux->linha;  //ind_coluna recebe em q coluna coluna_atual esta*/
                	while (linha != ind_linha_aux)  //procura a coluna correta
                	{
                    	if (linha_atual_aux->prox_linha == NULL)  //gera condicao de saida do laco, mantendo o coluna_atual apontando para ultima coluna
@@ -188,16 +188,17 @@ int set_matriz (MATRIZ_ESPARSA *matriz, int linha, int coluna, double valor)
 
 }
 
-double get_matriz(MATRIZ_ESPARSA *matriz, int linha, int coluna){
+
+double get_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna){
 	if( coluna  > matriz->nr_colunas || linha  > matriz->nr_linhas){
 		printf("Numero de linha e/ou coluna invalido(s)");
 		return -1;
 	}
-	NO *paux;
-	NO *coluna_atual, *linha_atual;
-	int ind_coluna, ind_linha;
-	paux = matriz->inicio->prox_linha;
 
+	NO *paux, *coluna_atual, *linha_atual;
+	int ind_coluna, ind_linha;
+
+	paux = matriz->inicio->prox_linha;
 	coluna_atual = matriz->inicio->prox_coluna;  //coluna_atual recebe o end. da coluna
 	ind_coluna = coluna_atual->coluna;
 
@@ -219,17 +220,24 @@ double get_matriz(MATRIZ_ESPARSA *matriz, int linha, int coluna){
 	 	if (linha_atual->prox_linha == NULL)
 			break;
 	}
+
 	if (linha == ind_linha) //se o noh existir, pega o valor
-	{
-		printf ("%lf \n", linha_atual->valor);
 		return linha_atual->valor;
-	}
-	else
+	else  //se nao existir, retorna 0
 		return 0;
 }
 
 
-MATRIZ_ESPARSA *somar_matriz (MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2)
+void print_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna)
+{
+	double valor;
+	valor = get_valor (matriz, linha, coluna);
+	printf ("%.2lf \n", valor);
+}
+
+
+
+MATRIZ_ESPARSA *somar_matriz(MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2)
 {
 	
 	if(s1->nr_linhas != s2->nr_linhas || s1->nr_colunas != s2->nr_colunas )  // para somar deve ter msmo nmero de linhas e colunas
@@ -246,9 +254,9 @@ MATRIZ_ESPARSA *somar_matriz (MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2)
 		{
 			for(int j = 1; j <= s3->nr_colunas; j++)
 			{
-				aux = get_matriz(s1, i, j) + get_matriz(s2, i, j);
+				aux = get_valor(s1, i, j) + get_valor(s2, i, j);
 				if (aux != 0)
-					set_matriz(s3, i, j, aux);	 
+					set_valor(s3, i, j, aux);	 
 			}
 		}  
 		return s3;	
@@ -303,7 +311,7 @@ MATRIZ_ESPARSA *multiplicar_matriz (MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2){
 			for(int i = 0; i < m1->nr_linhas; i++){
 				
 				double v = soma_mult (paux1, paux2, m1, m2);
-				set_matriz (m3, i, j, v);
+				set_no(m3, i, j, v);
 				paux2 = m2->inicio->prox_linha;   // passa para a proxima linha
 			    a = i;
 				while(a >= 0){
@@ -327,7 +335,7 @@ MATRIZ_ESPARSA *multiplicar_matriz (MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2){
 
 
 
-MATRIZ_ESPARSA *transposta_matriz (MATRIZ_ESPARSA *matriz)
+MATRIZ_ESPARSA *transposta_matriz(MATRIZ_ESPARSA *matriz)
 {
 	MATRIZ_ESPARSA *t = criar_matriz(matriz->nr_colunas, matriz->nr_linhas);
 	double aux;
@@ -336,9 +344,9 @@ MATRIZ_ESPARSA *transposta_matriz (MATRIZ_ESPARSA *matriz)
 	{
 		for(int j = 1; j <= matriz->nr_colunas; j++)
 		{
-			aux = get_matriz(matriz, i, j);
+			aux = get_valor(matriz, i, j);
 			if (aux != 0)
-				set_matriz(t, j, i, aux);	 
+				set_valor(t, j, i, aux);	 
 		}
 	}  
 	return t;
@@ -347,7 +355,7 @@ MATRIZ_ESPARSA *transposta_matriz (MATRIZ_ESPARSA *matriz)
 
 
 
-double determinante_matriz (MATRIZ_ESPARSA *matriz)
+double determinante_matriz(MATRIZ_ESPARSA *matriz)
 {
 	if (matriz->nr_colunas == matriz->nr_linhas)  //checa se a matriz eh quadrada
 	{
@@ -360,7 +368,7 @@ double determinante_matriz (MATRIZ_ESPARSA *matriz)
 		   
 		for(int i = 0; i < matriz->nr_linhas; i++){  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
 			for(int j = 0; j < matriz->nr_colunas; j++){
-				m_imp[i][j] = get_matriz (matriz, i + 1, j + 1) ; // substitui os valores da matriz que sao diferentes de zero
+				m_imp[i][j] = get_valor (matriz, i + 1, j + 1) ; // substitui os valores da matriz que sao diferentes de zero
 			}
 		}
 
@@ -369,7 +377,7 @@ double determinante_matriz (MATRIZ_ESPARSA *matriz)
 			double det = 0.0;
 
 			det = m_imp[0][0]*m_imp[1][1] - m_imp[0][1]*m_imp[1][0];
-			printf ("O valor do determinante eh: %lf\n", det);
+			printf ("O valor do determinante eh: %.4lf\n", det);
 			return det;
 		}
 
@@ -379,7 +387,7 @@ double determinante_matriz (MATRIZ_ESPARSA *matriz)
 
 			det = (m_imp[0][0]*m_imp[1][1]*m_imp[2][2] + m_imp[0][1]*m_imp[1][2]*m_imp[2][0] + m_imp[0][2]*m_imp[1][0]*m_imp[2][1]) 
 			- (m_imp[0][2]*m_imp[1][1]*m_imp[2][0] + m_imp[0][0]*m_imp[1][2]*m_imp[2][1] + m_imp[0][1]*m_imp[1][0]*m_imp[2][2]);
-			printf ("O valor do determinante eh: %lf\n", det);
+			printf ("O valor do determinante eh: %.4lf\n", det);
 			return det;
 		}
 		if (matriz->nr_colunas == 4)  //calcula o determinante da matriz de ordem 4
@@ -399,14 +407,14 @@ double determinante_matriz (MATRIZ_ESPARSA *matriz)
 			- (m_imp[1][2]*m_imp[2][1]*m_imp[3][0] + m_imp[1][0]*m_imp[2][2]*m_imp[3][1] + m_imp[1][1]*m_imp[2][0]*m_imp[3][2]));
 
 			det = det00 - det01 + det02 - det03;
-			printf ("%lf \n", det);
+			printf ("%.4lf \n", det);
 			return det;
 		} 
 	}
-	
+	return -1; //deu ruim!
 }
 
-void print_matriz (MATRIZ_ESPARSA *matriz){
+void print_matriz(MATRIZ_ESPARSA *matriz){
 	double m_imp[matriz->nr_linhas][matriz->nr_colunas];
 	for(int i = 0; i < matriz->nr_linhas; i++){  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
 		for(int j = 0; j < matriz->nr_colunas; j++){
@@ -414,11 +422,11 @@ void print_matriz (MATRIZ_ESPARSA *matriz){
 		}
 	}
 	
-	NO *coluna_atual, *linha_atual;
+	/*NO *coluna_atual, *linha_atual;*/
 	   
 	for(int i = 0; i < matriz->nr_linhas; i++){  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
 		for(int j = 0; j < matriz->nr_colunas; j++){
-			m_imp[i][j] = get_matriz (matriz, i + 1, j + 1) ; // substitui os valores da matriz que sao diferentes de zero
+			m_imp[i][j] = get_valor (matriz, i + 1, j + 1) ; // substitui os valores da matriz que sao diferentes de zero
 		}
 	}
 	
@@ -436,7 +444,7 @@ void print_matriz (MATRIZ_ESPARSA *matriz){
 
 
 
-void resumo_matriz (MATRIZ_ESPARSA *matriz){
+void resumo_matriz(MATRIZ_ESPARSA *matriz){
 	
 	double m_imp[matriz->nr_linhas][matriz->nr_colunas];
 	for(int i = 0; i < matriz->nr_linhas; i++){  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
@@ -450,7 +458,7 @@ void resumo_matriz (MATRIZ_ESPARSA *matriz){
 	{  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
 		for(int j = 0; j < matriz->nr_colunas; j++)
 		{
-			m_imp[i][j] = get_matriz (matriz, i + 1, j + 1) ; // substitui os valores da matriz que sao diferentes de zero
+			m_imp[i][j] = get_valor (matriz, i + 1, j + 1) ; // substitui os valores da matriz que sao diferentes de zero
 		}
 	}
 	
@@ -470,7 +478,7 @@ void resumo_matriz (MATRIZ_ESPARSA *matriz){
 }
 
 
-MATRIZ_ESPARSA *ler_matriz (const char nome[])
+MATRIZ_ESPARSA *ler_matriz(const char nome[])
 {
 	FILE *p = NULL;
 	int tam[4];

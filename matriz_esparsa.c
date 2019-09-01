@@ -36,22 +36,25 @@ MATRIZ_ESPARSA *iniciar_matriz() {
 	}
 }
 
+/* 
+ * Iniciliza um  nova matriz esparsa de nr_linhas e nr_colunas.
+ * @return ponteiro para matriz
+ */
 MATRIZ_ESPARSA *criar_matriz(int nr_linhas, int nr_colunas) //NOVO CODIGO
 {
-    NO *proximaLinha = NULL, *proximaColuna = NULL;  //guardarao endereco do ultimo noh criado
+    NO 	*proximaLinha = NULL, 
+		*proximaColuna = NULL;  				//guardarao endereco do ultimo noh criado
 
-    for(int i = nr_linhas; i >= 1; i--)  //criar os indicadores de posicao de linha da ultima linha para a primeira
-    {
+    for(int i = nr_linhas; i >= 1; i--) { 		//criar os indicadores de posicao de linha da ultima linha para a primeira
         NO *matriz = criar_no();
-        if(matriz != NULL)
-        {
+        if(matriz != NULL) {
             matriz->linha = i;
             matriz->prox_linha = proximaLinha;  //recebe endereco do ultimo noh criado q eh a proxima "linha"
-            proximaLinha = matriz;  //torna esta o ultimo noh criado
+            proximaLinha = matriz;  			//torna esta o ultimo noh criado
         }
     }
 
-    for(int j = nr_colunas; j >= 1; j--) { //repete o processo anterior, mas agora para colunas  
+    for(int j = nr_colunas; j >= 1; j--) { 		//repete o processo anterior, mas agora para colunas  
         NO *matriz = criar_no();  
         if(matriz != NULL) {
             matriz->coluna = j;
@@ -61,7 +64,7 @@ MATRIZ_ESPARSA *criar_matriz(int nr_linhas, int nr_colunas) //NOVO CODIGO
     }
 
     NO *cabeca = criar_no();
-    if (cabeca != NULL) { //criando o noh cabeca
+    if (cabeca != NULL) { 						//criando o noh cabeca
         cabeca->coluna = 0;
         cabeca->linha = 0;
         cabeca->prox_coluna = proximaColuna;
@@ -76,30 +79,29 @@ MATRIZ_ESPARSA *criar_matriz(int nr_linhas, int nr_colunas) //NOVO CODIGO
     }
 
 	if (matriz != NULL)
-    	return matriz;  //retorna o endereco do apontador para o no cabeca
+    	return matriz;  						//retorna o endereco do apontador para o no cabeca
 	else
 		return NULL;
 }
 
+/*
+ * Apaga a matriz, liberando toda memória alocada.
+ */
+void apagar_matriz(MATRIZ_ESPARSA *matriz) {
+   	NO 	*proximaColuna = NULL, 
+	   	*proximaLinha = NULL;							//armazenarao o endereco das proximas coluna e linha respctivamente
+	// TODO: implementar um vetor para guardar elementos da matriz, apagar do vetor, apresenta um comportamento mais estável
+   	if (matriz != NULL && matriz->inicio != NULL) {
+       	proximaColuna = matriz->inicio;  				//recebe o endereco do noh cabeca
+		proximaLinha = proximaColuna->prox_linha;  		//recebe o endereco da primeira linha da primeira coluna
 
-
-
-void apagar_matriz(MATRIZ_ESPARSA *matriz)
-{
-   	NO *proximaColuna = NULL , *proximaLinha = NULL;  //armazenarao o endereco das proximas coluna e linha respctivamente
-
-   	if (matriz != NULL && matriz->inicio != NULL)
-   	{
-       	proximaColuna = matriz->inicio;  //recebe o endereco do noh cabeca
-       	proximaLinha = proximaColuna->prox_linha;  //recebe o endereco da primeira linha da primeira coluna
-
-       	do { //checa se acabou os indicadores de colunas      	
-           	do { //checa se acabou as linhas
+       	do { 											//checa se acabou os indicadores de colunas      	
+           	do { 										//checa se acabou as linhas
 				if (proximaLinha == NULL)
 					break;  
-               	proximaLinha = proximaLinha->prox_linha;  //aponta para o noh que sera apagado na proxima iteracao
-               	free (proximaColuna->prox_linha);  //libera o noh desta iteracao
-				proximaColuna->prox_linha = proximaLinha; //indicador passa a apontar o proximo noh
+               	proximaLinha = proximaLinha->prox_linha;//aponta para o noh que sera apagado na proxima iteracao
+               	free (proximaColuna->prox_linha);  		//libera o noh desta iteracao
+				proximaColuna->prox_linha = proximaLinha;//indicador passa a apontar o proximo noh
 				   
            	} while (proximaColuna->prox_linha != NULL);
 			if (proximaColuna == NULL)
@@ -112,143 +114,137 @@ void apagar_matriz(MATRIZ_ESPARSA *matriz)
 	free(matriz);
 }
 
-int set_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna, double valor)
-{
-    int ind_coluna, ind_linha;  //indicadores de coluna e linha
+int set_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna, double valor) {
+    int ind_coluna, ind_linha;  					//indicadores de coluna e linha
    	NO *coluna_atual, *linha_atual;
    	NO *novo_no = (NO *) malloc (sizeof (NO));
-   	if (matriz->inicio != NULL)
-   	{
-       	coluna_atual = matriz->inicio->prox_coluna;  //coluna_atual recebe o end. da coluna
-       	ind_coluna = coluna_atual->coluna;  //ind_coluna recebe em q coluna coluna_atual esta
-       	while (coluna != ind_coluna)  //procura a coluna correta
-       	{
-           	if (coluna_atual->prox_coluna == NULL)  //gera condicao de saida do laco, mantendo o coluna_atual apontando para ultima coluna
-               	break;
-           	coluna_atual = coluna_atual->prox_coluna;  //pega proxima coluna
-           	ind_coluna = coluna_atual->coluna;  //pega numero da coluna
-       	}
-       	
+	
+   	if (matriz->inicio == NULL)
+	   return -1;
 
-       	linha_atual = coluna_atual;  //linha_atual aponta para linha de indicadores da coluna desejada
-       	ind_linha = linha_atual->linha; //indica a linha do noh atual
-       	if (linha_atual->prox_linha == NULL)  //caso nao haja elemento na coluna, executa o if
-       	{
-           	novo_no->prox_linha = NULL;
-           	novo_no->linha = linha;
-           	novo_no->coluna = coluna;
-           	novo_no->valor = valor;
-           	linha_atual->prox_linha = novo_no;
-       	}
-       	else
-       	{
-           	while ((linha > linha_atual->linha) && (linha >= linha_atual->prox_linha->linha))  //procura o ponto a inserir o novo noh
-           	{
-               	linha_atual = linha_atual->prox_linha;
-				ind_linha = linha_atual->linha;
-				if (linha_atual->prox_linha == NULL)
-				   break;
-           	}
-           	if (linha == linha_atual->linha) //se o noh existir, substitui o valor
-           	{
-               	linha_atual->valor = valor;
-               	return 0;
-           	}
-           	else //se nao, iseriremos o novo noh ================================= insercao do novo NOH
-           	{
-              
-               	novo_no->linha = linha;
-               	novo_no->coluna = coluna;
-               	novo_no->valor = valor; //novo noh foi criado e seu valor e posicao de linha e coluna ja foram colocados
-               	novo_no->prox_linha = linha_atual->prox_linha;  //passa a apontar pro proximo noh
-               	linha_atual->prox_linha = novo_no;  //noh anterior passa a apontar pra este
-               	//Agora devemos acertar os ponteiros de coluna, teremos q buscar a linha e inseri-lo:
+	coluna_atual = matriz->inicio->prox_coluna;  	//coluna_atual recebe o end. da coluna
+	ind_coluna = coluna_atual->coluna;  			//ind_coluna recebe em q coluna coluna_atual esta
 
-               	int  ind_coluna_aux, ind_linha_aux;
-               	NO *linha_atual_aux,*coluna_atual_aux;
-          
-               	linha_atual_aux = matriz->inicio->prox_linha;  //coluna_atual recebe o end. da coluna
-               	/*ind_linha_aux = linha_atual_aux->linha;  //ind_coluna recebe em q coluna coluna_atual esta*/
-               	while (linha != ind_linha_aux)  //procura a coluna correta
-               	{
-                   	if (linha_atual_aux->prox_linha == NULL)  //gera condicao de saida do laco, mantendo o coluna_atual apontando para ultima coluna
-                       	break;
-                   	linha_atual_aux = linha_atual_aux->prox_linha;  //pega proxima coluna
-                   	ind_linha_aux = linha_atual_aux->linha;  //pega numero da coluna
-              
-               	}	
-               	coluna_atual_aux = linha_atual_aux;  //linha_atual aponta para linha de indicadores da coluna desejada
-               	ind_coluna_aux = coluna_atual_aux->coluna; //indica a linha do proximo noh
-               	if (coluna_atual_aux->prox_coluna == NULL)
-               	{
-                   	novo_no->prox_coluna = NULL;
-                   	coluna_atual_aux = novo_no;
-               	}
-               	else
-               	{
-                   	while ((coluna > coluna_atual_aux->coluna) && (coluna >= coluna_atual_aux->prox_coluna->coluna))  //procura o ponto a inserir o novo noh
-                   	{
-						if (coluna_atual_aux->prox_linha == NULL)
-							break;   
-						coluna_atual_aux = coluna_atual_aux->prox_coluna;
-						ind_coluna_aux = coluna_atual_aux->prox_coluna->coluna;
-						if (coluna_atual_aux->prox_linha == NULL)
-						   break;
-                   	}
-                   	novo_no->prox_coluna = coluna_atual_aux->prox_coluna;
-                   	coluna_atual->prox_coluna = novo_no;
-               	}
-          
-           	}
-       	}
-       	return 1;
-   	}
-   	return 0;
+	while (coluna != ind_coluna) { 					//procura a coluna correta
+		if (coluna_atual->prox_coluna == NULL)  	//gera condicao de saida do laco, mantendo o coluna_atual apontando para ultima coluna
+			break;
+		coluna_atual = coluna_atual->prox_coluna;  	//pega proxima coluna
+		ind_coluna = coluna_atual->coluna;  		//pega numero da coluna
+	}
+	
 
+	linha_atual = coluna_atual;  					//linha_atual aponta para linha de indicadores da coluna desejada
+	ind_linha = linha_atual->linha; 				//indica a linha do noh atual
+	if (linha_atual->prox_linha == NULL) { 			//caso nao haja elemento na coluna, executa o if
+		novo_no->prox_linha = NULL;
+		novo_no->linha = linha;
+		novo_no->coluna = coluna;
+		novo_no->valor = valor;
+		linha_atual->prox_linha = novo_no;
+	}
+	else {
+		while (linha > linha_atual->linha && 
+					linha >= linha_atual->prox_linha->linha) { //procura o ponto a inserir o novo noh
+			linha_atual = linha_atual->prox_linha;
+			ind_linha = linha_atual->linha;
+			if (linha_atual->prox_linha == NULL)
+			break;
+		}
+		if (linha == linha_atual->linha) {			//se o noh existir, substitui o valor
+			linha_atual->valor = valor;
+			return 0;
+		}
+		else //se nao, iseriremos o novo noh ================================= insercao do novo NOH
+		{
+		
+			novo_no->linha = linha;
+			novo_no->coluna = coluna;
+			novo_no->valor = valor; 				//novo noh foi criado e seu valor e posicao de linha e coluna ja foram colocados
+			novo_no->prox_linha = linha_atual->prox_linha;  //passa a apontar pro proximo noh
+			linha_atual->prox_linha = novo_no;  	//noh anterior passa a apontar pra este
+
+			//Agora devemos acertar os ponteiros de coluna, teremos q buscar a linha e inseri-lo:
+			int ind_coluna_aux, 
+				ind_linha_aux;
+
+			NO 	*linha_atual_aux,
+				*coluna_atual_aux;
+	
+			linha_atual_aux = matriz->inicio->prox_linha;  	//coluna_atual recebe o end. da coluna
+			/*ind_linha_aux = linha_atual_aux->linha;  		//ind_coluna recebe em q coluna coluna_atual esta*/
+			while (linha != ind_linha_aux) { 				//procura a coluna correta
+				if (linha_atual_aux->prox_linha == NULL)	//gera condicao de saida do laco, mantendo o coluna_atual apontando para ultima coluna
+					break;
+				linha_atual_aux = linha_atual_aux->prox_linha; //pega proxima coluna
+				ind_linha_aux = linha_atual_aux->linha;		//pega numero da coluna
+			}	
+			coluna_atual_aux = linha_atual_aux;  			//linha_atual aponta para linha de indicadores da coluna desejada
+			ind_coluna_aux = coluna_atual_aux->coluna; 		//indica a linha do proximo noh
+			if (coluna_atual_aux->prox_coluna == NULL) {
+				novo_no->prox_coluna = NULL;
+				coluna_atual_aux = novo_no;
+			}
+			else {
+				while (coluna > coluna_atual_aux->coluna 
+							&& coluna >= coluna_atual_aux->prox_coluna->coluna) { //procura o ponto a inserir o novo noh
+					if (coluna_atual_aux->prox_linha == NULL)
+						break;   
+					coluna_atual_aux = coluna_atual_aux->prox_coluna;
+					ind_coluna_aux = coluna_atual_aux->prox_coluna->coluna;
+					if (coluna_atual_aux->prox_linha == NULL)
+						break;
+				}
+				novo_no->prox_coluna = coluna_atual_aux->prox_coluna;
+				coluna_atual->prox_coluna = novo_no;
+			}
+		}
+	}
+	return 1;
 }
 
 
-double get_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna){
+double get_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna) {
+	NO 	*paux, 
+		*coluna_atual, 
+		*linha_atual;
+
+	int ind_coluna, 
+		ind_linha;
+
 	if( coluna  > matriz->nr_colunas || linha  > matriz->nr_linhas){
 		printf("Numero de linha e/ou coluna invalido(s)");
 		return -1;
 	}
 
-	NO *paux, *coluna_atual, *linha_atual;
-	int ind_coluna, ind_linha;
-
 	paux = matriz->inicio->prox_linha;
-	coluna_atual = matriz->inicio->prox_coluna;  //coluna_atual recebe o end. da coluna
+	coluna_atual = matriz->inicio->prox_coluna;  	//coluna_atual recebe o end. da coluna
 	ind_coluna = coluna_atual->coluna;
 
-	while (coluna != ind_coluna)  //procura a coluna correta
-	{
-		if (coluna_atual->prox_coluna == NULL)  //gera condicao de saida do laco, mantendo o coluna_atual apontando para ultima coluna
+	while (coluna != ind_coluna) { 					//procura a coluna correta
+		if (coluna_atual->prox_coluna == NULL)  	//gera condicao de saida do laco, mantendo o coluna_atual apontando para ultima coluna
 			break;
-		coluna_atual = coluna_atual->prox_coluna;  //pega proxima coluna
-		ind_coluna = coluna_atual->coluna;  //pega numero da coluna
+		coluna_atual = coluna_atual->prox_coluna;  	//pega proxima coluna
+		ind_coluna = coluna_atual->coluna;  		//pega numero da coluna
 	}
 
-	linha_atual = coluna_atual;  //linha_atual aponta para linha de indicadores da coluna desejada
-	ind_linha = linha_atual->linha; //indica a linha do noh atual
+	linha_atual = coluna_atual;  					//linha_atual aponta para linha de indicadores da coluna desejada
+	ind_linha = linha_atual->linha; 				//indica a linha do noh atual
 
-	while ((linha > ind_linha) && (linha >= linha_atual->prox_linha->linha))  //procura a linha correta 
-	{
+	while ((linha > ind_linha) && (linha >= linha_atual->prox_linha->linha)) { //procura a linha correta 
 		linha_atual = linha_atual->prox_linha;
 	 	ind_linha = linha_atual->linha;
 	 	if (linha_atual->prox_linha == NULL)
 			break;
 	}
 
-	if (linha == ind_linha) //se o noh existir, pega o valor
+	if (linha == ind_linha) 						//se o noh existir, pega o valor
 		return linha_atual->valor;
-	else  //se nao existir, retorna 0
+	else  											//se nao existir, retorna 0
 		return 0;
 }
 
 
-void print_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna)
-{
+void print_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna) {
 	double valor;
 	valor = get_valor (matriz, linha, coluna);
 	printf ("%.2lf \n", valor);
@@ -256,23 +252,18 @@ void print_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna)
 
 
 
-MATRIZ_ESPARSA *somar_matriz(MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2)
-{
+MATRIZ_ESPARSA *somar_matriz(MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2) {
 	
-	if(s1->nr_linhas != s2->nr_linhas || s1->nr_colunas != s2->nr_colunas )  // para somar deve ter msmo nmero de linhas e colunas
-	{
+	if(s1->nr_linhas != s2->nr_linhas || s1->nr_colunas != s2->nr_colunas ) { 	// para somar deve ter msmo nmero de linhas e colunas
 		printf("As matrizes devem ter o mesmo numero de linhas e colunas");
 		return 0;
 	}
-	else
-	{
-		MATRIZ_ESPARSA *s3= criar_matriz(s1->nr_linhas, s2->nr_colunas); // cria a matriz que surge da soma
+	else {
+		MATRIZ_ESPARSA *s3= criar_matriz(s1->nr_linhas, s2->nr_colunas); 		// cria a matriz que surge da soma
 		double aux;
 		
-		for(int i = 1; i <= s3->nr_linhas; i++)  // imprime a matriz
-		{
-			for(int j = 1; j <= s3->nr_colunas; j++)
-			{
+		for(int i = 1; i <= s3->nr_linhas; i++) { 								// imprime a matriz
+			for(int j = 1; j <= s3->nr_colunas; j++) {
 				aux = get_valor(s1, i, j) + get_valor(s2, i, j);
 				if (aux != 0)
 					set_valor(s3, i, j, aux);	 
@@ -354,15 +345,12 @@ MATRIZ_ESPARSA *multiplicar_matriz (MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2){
 
 
 
-MATRIZ_ESPARSA *transposta_matriz(MATRIZ_ESPARSA *matriz)
-{
+MATRIZ_ESPARSA *transposta_matriz(MATRIZ_ESPARSA *matriz) {
 	MATRIZ_ESPARSA *t = criar_matriz(matriz->nr_colunas, matriz->nr_linhas);
 	double aux;
 
-	for(int i = 1; i <= matriz->nr_linhas; i++)  // imprime a matriz
-	{
-		for(int j = 1; j <= matriz->nr_colunas; j++)
-		{
+	for(int i = 1; i <= matriz->nr_linhas; i++) { // imprime a matriz
+		for(int j = 1; j <= matriz->nr_colunas; j++) {
 			aux = get_valor(matriz, i, j);
 			if (aux != 0)
 				set_valor(t, j, i, aux);	 
@@ -374,8 +362,7 @@ MATRIZ_ESPARSA *transposta_matriz(MATRIZ_ESPARSA *matriz)
 
 
 
-double determinante_matriz(MATRIZ_ESPARSA *matriz)
-{
+double determinante_matriz(MATRIZ_ESPARSA *matriz) {
 	if (matriz->nr_colunas == matriz->nr_linhas)  //checa se a matriz eh quadrada
 	{
 		int m_imp[matriz->nr_linhas][matriz->nr_colunas];  //criaremos a matriz em memoria para facilitar o calculo (espera-se q ela caiba na memoria)
@@ -433,25 +420,25 @@ double determinante_matriz(MATRIZ_ESPARSA *matriz)
 	return -1; //deu ruim!
 }
 
-void print_matriz(MATRIZ_ESPARSA *matriz){
+void print_matriz(MATRIZ_ESPARSA *matriz) {
 	double m_imp[matriz->nr_linhas][matriz->nr_colunas];
-	for(int i = 0; i < matriz->nr_linhas; i++){  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
-		for(int j = 0; j < matriz->nr_colunas; j++){
+	for(int i = 0; i < matriz->nr_linhas; i++) {  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
+		for(int j = 0; j < matriz->nr_colunas; j++) {
 			m_imp[i][j]=0 ; // zero toda a matriz e posteriormente substiruiremos os valores da matris os quais sao diferentes de zero
 		}
 	}
 	
 	/*NO *coluna_atual, *linha_atual;*/
 	   
-	for(int i = 0; i < matriz->nr_linhas; i++){  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
-		for(int j = 0; j < matriz->nr_colunas; j++){
+	for(int i = 0; i < matriz->nr_linhas; i++) {  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
+		for(int j = 0; j < matriz->nr_colunas; j++) {
 			m_imp[i][j] = get_valor (matriz, i + 1, j + 1) ; // substitui os valores da matriz que sao diferentes de zero
 		}
 	}
 	
 	
-   	for(int i = 0; i < matriz->nr_linhas; i++){  // imprime a matriz
-		for(int j = 0; j < matriz->nr_colunas; j++){
+   	for(int i = 0; i < matriz->nr_linhas; i++) {  // imprime a matriz
+		for(int j = 0; j < matriz->nr_colunas; j++) {
 			printf("%.2lf ",m_imp[i][j]) ;
 		}
 		printf("\n");
@@ -460,45 +447,34 @@ void print_matriz(MATRIZ_ESPARSA *matriz){
 }
 
 
-
-
-
-void resumo_matriz(MATRIZ_ESPARSA *matriz){
-	
+void resumo_matriz(MATRIZ_ESPARSA *matriz) {
 	double m_imp[matriz->nr_linhas][matriz->nr_colunas];
-	for(int i = 0; i < matriz->nr_linhas; i++){  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
-		for(int j = 0; j < matriz->nr_colunas; j++){
-			m_imp[i][j]=0 ; // zero toda a matriz e posteriormente substiruiremos os valores da matris os quais sao diferentes de zero
+
+	for(int i = 0; i < matriz->nr_linhas; i++) {  				// crio uma matriz com o numero de linhas e colunas inicialmente dadas
+		for(int j = 0; j < matriz->nr_colunas; j++) {
+			m_imp[i][j]=0 ; 									// zero toda a matriz e posteriormente substiruiremos os valores da matris os quais sao diferentes de zero
 		}
 	}
 	
-	   
-	for(int i = 0; i < matriz->nr_linhas; i++)
-	{  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
-		for(int j = 0; j < matriz->nr_colunas; j++)
-		{
-			m_imp[i][j] = get_valor (matriz, i + 1, j + 1) ; // substitui os valores da matriz que sao diferentes de zero
+	for(int i = 0; i < matriz->nr_linhas; i++) {  				// crio uma matriz com o numero de linhas e colunas inicialmente dadas
+		for(int j = 0; j < matriz->nr_colunas; j++) {
+			m_imp[i][j] = get_valor (matriz, i + 1, j + 1) ; 	// substitui os valores da matriz que sao diferentes de zero
 		}
 	}
 	
-	
-	for(int i = 0; i < matriz->nr_linhas; i++)
-	{  // imprime a matriz
-		for(int j = 0; j < matriz->nr_colunas; j++)
-		{
+	for(int i = 0; i < matriz->nr_linhas; i++) {  				// imprime a matriz
+		for(int j = 0; j < matriz->nr_colunas; j++) {
 			if (m_imp[i][j]!= 0.0){
-			
 				printf("linha:%d coluna:%d valor:%lf \n", i+1, j+1, m_imp[i][j]);
 			}
 		}
-	printf("\n");
+		printf("\n");
 	}  
 
 }
 
 
-MATRIZ_ESPARSA *ler_matriz(const char nome[])
-{
+MATRIZ_ESPARSA *ler_matriz(const char nome[]) {
 	FILE *p = NULL;
 	int tam[4];
 	

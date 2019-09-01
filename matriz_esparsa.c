@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 /* 
- * Inicializa um novo elemento da matriz com valores "zerados".
+ * Inicializa um novo elemento (estrutura NO) da matriz com valores "zerados".
  * @return ponteiro para Nó
  */
 NO *criar_no() {
@@ -21,7 +21,7 @@ NO *criar_no() {
 }
 
 /* 
- * Inicializa o ponteiro para a matriz com valores "zerados".
+ * Inicializa o ponteiro (estrutura MATRIZ_ESPARSA) para a matriz com valores "zerados".
  * @return ponteiro para matriz
  */
 MATRIZ_ESPARSA *iniciar_matriz() {
@@ -240,7 +240,7 @@ double get_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna) {
 	if (linha == ind_linha) 						//se o noh existir, pega o valor
 		return linha_atual->valor;
 	else  											//se nao existir, retorna 0
-		return 0;
+		return 0.0000;
 }
 
 
@@ -349,7 +349,7 @@ MATRIZ_ESPARSA *transposta_matriz(MATRIZ_ESPARSA *matriz) {
 	MATRIZ_ESPARSA *t = criar_matriz(matriz->nr_colunas, matriz->nr_linhas);
 	double aux;
 
-	for(int i = 1; i <= matriz->nr_linhas; i++) { // imprime a matriz
+	for(int i = 1; i <= matriz->nr_linhas; i++) {
 		for(int j = 1; j <= matriz->nr_colunas; j++) {
 			aux = get_valor(matriz, i, j);
 			if (aux != 0)
@@ -422,13 +422,12 @@ double determinante_matriz(MATRIZ_ESPARSA *matriz) {
 
 void print_matriz(MATRIZ_ESPARSA *matriz) {
 	double m_imp[matriz->nr_linhas][matriz->nr_colunas];
+	
 	for(int i = 0; i < matriz->nr_linhas; i++) {  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
 		for(int j = 0; j < matriz->nr_colunas; j++) {
 			m_imp[i][j]=0 ; // zero toda a matriz e posteriormente substiruiremos os valores da matris os quais sao diferentes de zero
 		}
 	}
-	
-	/*NO *coluna_atual, *linha_atual;*/
 	   
 	for(int i = 0; i < matriz->nr_linhas; i++) {  // crio uma matriz com o numero de linhas e colunas inicialmente dadas
 		for(int j = 0; j < matriz->nr_colunas; j++) {
@@ -436,14 +435,12 @@ void print_matriz(MATRIZ_ESPARSA *matriz) {
 		}
 	}
 	
-	
    	for(int i = 0; i < matriz->nr_linhas; i++) {  // imprime a matriz
 		for(int j = 0; j < matriz->nr_colunas; j++) {
 			printf("%.2lf ",m_imp[i][j]) ;
 		}
 		printf("\n");
 	}  
-
 }
 
 

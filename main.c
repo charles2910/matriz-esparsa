@@ -10,7 +10,9 @@ int main () {
 			set_valor(matriz, i, j, (double) i + j);
 	printf("endereço matriz: %ld\n", matriz);
 	printf("%d %d\n", matriz->nr_colunas, matriz->nr_linhas);
+	set_valor(matriz, 2, 2, 7.000);
 	print_matriz(matriz);
+	resumo_matriz(matriz);
 	apagar_matriz(matriz);
 	return 0;
 }

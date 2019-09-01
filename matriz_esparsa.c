@@ -1,7 +1,20 @@
 #include "matriz_esparsa.h"
 #include <stdio.h>
-#include <stdlib.h>
 
+
+NO *criar_no() {
+	NO *novo = (NO *) malloc (sizeof (NO));
+	if(matriz != NULL) {
+		novo->linha = -1;
+		novo->coluna = -1;
+		novo->valor = 0.0;
+		novo->prox_coluna = NULL;
+		novo->prox_linha = NULL;
+		return novo;
+	} else {
+		return NULL;
+	}
+}
 
 
 MATRIZ_ESPARSA *criar_matriz(int nr_linhas, int nr_colunas) //NOVO CODIGO
@@ -10,13 +23,10 @@ MATRIZ_ESPARSA *criar_matriz(int nr_linhas, int nr_colunas) //NOVO CODIGO
 
     for(int i = nr_linhas; i >= 1; i--)  //criar os indicadores de posicao de linha da ultima linha para a primeira
     {
-        NO *matriz = (NO *) malloc (sizeof (NO));
+        NO *matriz = criar_no();
         if(matriz != NULL)
         {
             matriz->linha = i;
-            matriz->coluna = -1;
-            matriz->valor = 0.0;
-            matriz->prox_coluna = NULL;
             matriz->prox_linha = proximaLinha;  //recebe endereco do ultimo noh criado q eh a proxima "linha"
             proximaLinha = matriz;  //torna esta o ultimo noh criado
         }

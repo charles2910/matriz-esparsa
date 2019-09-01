@@ -1,10 +1,14 @@
 #include "matriz_esparsa.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-
+/* 
+ * Inicializa um novo elemento da matriz com valores "zerados".
+ * @return ponteiro para Nó
+ */
 NO *criar_no() {
 	NO *novo = (NO *) malloc (sizeof (NO));
-	if(matriz != NULL) {
+	if(novo != NULL) {
 		novo->linha = -1;
 		novo->coluna = -1;
 		novo->valor = 0.0;
@@ -16,6 +20,21 @@ NO *criar_no() {
 	}
 }
 
+/* 
+ * Inicializa o ponteiro para a matriz com valores "zerados".
+ * @return ponteiro para matriz
+ */
+MATRIZ_ESPARSA *iniciar_matriz() {
+	MATRIZ_ESPARSA *novo = (MATRIZ_ESPARSA *) malloc (sizeof (MATRIZ_ESPARSA));
+	if(novo != NULL) {
+		novo->nr_linhas = -1;
+		novo->nr_colunas = -1;
+		novo->inicio = NULL;
+		return novo;
+	} else {
+		return NULL;
+	}
+}
 
 MATRIZ_ESPARSA *criar_matriz(int nr_linhas, int nr_colunas) //NOVO CODIGO
 {
@@ -32,41 +51,34 @@ MATRIZ_ESPARSA *criar_matriz(int nr_linhas, int nr_colunas) //NOVO CODIGO
         }
     }
 
-    for(int j = nr_colunas; j >= 1; j--)  //repete o processo anterior, mas agora para colunas
-    {  
-        NO *matriz = (NO *) malloc (sizeof (NO));
-      
-        if(matriz != NULL)
-        {
-            matriz->linha = -1;
+    for(int j = nr_colunas; j >= 1; j--) { //repete o processo anterior, mas agora para colunas  
+        NO *matriz = criar_no();  
+        if(matriz != NULL) {
             matriz->coluna = j;
-            matriz->valor = 0.0;
-            matriz->prox_linha = NULL;
             matriz->prox_coluna= proximaColuna;
             proximaColuna = matriz;
         }
     }
 
-    NO *cabeca = (NO *) malloc (sizeof (NO));
-
-    if (cabeca != NULL)  //criando o noh cabeca
-    {
+    NO *cabeca = criar_no();
+    if (cabeca != NULL) { //criando o noh cabeca
         cabeca->coluna = 0;
         cabeca->linha = 0;
-        cabeca->valor = 0.0;
         cabeca->prox_coluna = proximaColuna;
         cabeca->prox_linha = proximaLinha;
     }
 
-    MATRIZ_ESPARSA *matriz = (MATRIZ_ESPARSA *) malloc (sizeof (MATRIZ_ESPARSA));
-    if (matriz != NULL)
-    {
+    MATRIZ_ESPARSA *matriz = iniciar_matriz();
+    if (matriz != NULL) {
         matriz->inicio = cabeca;
         matriz->nr_colunas = nr_colunas;
         matriz->nr_linhas = nr_linhas;
     }
-    return matriz;  //retorna o endereco do apontador para o no cabeca
 
+	if (matriz != NULL)
+    	return matriz;  //retorna o endereco do apontador para o no cabeca
+	else
+		return NULL;
 }
 
 

@@ -88,31 +88,28 @@ void apagar_matriz(MATRIZ_ESPARSA *matriz)
 {
    	NO *proximaColuna = NULL , *proximaLinha = NULL;  //armazenarao o endereco das proximas coluna e linha respctivamente
 
-  
-   	if (matriz->inicio != NULL)
+   	if (matriz != NULL && matriz->inicio != NULL)
    	{
        	proximaColuna = matriz->inicio;  //recebe o endereco do noh cabeca
        	proximaLinha = proximaColuna->prox_linha;  //recebe o endereco da primeira linha da primeira coluna
 
-       	do //checa se acabou os indicadores de colunas
-       	{
-			
-           	do  //checa se acabou as linhas
-           	{
+       	do { //checa se acabou os indicadores de colunas      	
+           	do { //checa se acabou as linhas
 				if (proximaLinha == NULL)
 					break;  
                	proximaLinha = proximaLinha->prox_linha;  //aponta para o noh que sera apagado na proxima iteracao
-               	free (*(&(proximaColuna->prox_linha)));  //libera o noh desta iteracao
+               	free (proximaColuna->prox_linha);  //libera o noh desta iteracao
 				proximaColuna->prox_linha = proximaLinha; //indicador passa a apontar o proximo noh
 				   
            	} while (proximaColuna->prox_linha != NULL);
+			if (proximaColuna == NULL)
+					break;
            	proximaColuna = proximaColuna->prox_coluna;  //faz o processo acima pra colunas
-			free ((matriz->inicio->prox_coluna));  
-           	matriz->inicio->prox_coluna = proximaColuna;
-       	} while (matriz->inicio->prox_coluna != NULL);
-       	free (*(&(matriz->inicio)));  
+			free (matriz->inicio);  
+           	matriz->inicio = proximaColuna;
+       	} while (matriz->inicio->prox_coluna != NULL);  
    	}
-
+	free(matriz);
 }
 
 int set_valor(MATRIZ_ESPARSA *matriz, int linha, int coluna, double valor)

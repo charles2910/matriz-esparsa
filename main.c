@@ -11,5 +11,6 @@ int main () {
 	printf("endereço matriz: %ld\n", matriz);
 	printf("%d %d\n", matriz->nr_colunas, matriz->nr_linhas);
 	print_matriz(matriz);
+	apagar_matriz(matriz);
 	return 0;
 }

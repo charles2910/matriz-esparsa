@@ -301,47 +301,33 @@ double soma_mult(NO *p_aux1, NO *p_aux2, MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2)
 	}
 
 }
+*/
 
 MATRIZ_ESPARSA *multiplicar_matriz (MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2){
 	if(m1->nr_colunas != m2->nr_linhas){
-		printf("nmeros de colunas e linhas das matrizes nao coicidem");
+		printf("ERRO: números de colunas e linhas das matrizes não coicidem.\n");
 		return NULL;
 	}
-	else{
-		MATRIZ_ESPARSA *m3 = criar_matriz(m1->nr_linhas, m2->nr_colunas); // cria a matriz q sera gereda pel multiplicaçao
-		NO *paux0, *paux1, *paux2;
-		paux1 = m1->inicio->prox_coluna;
-		paux2 = m2->inicio->prox_linha;
-		int a, b;
-		
-		
-		for(int j = 0; j < m2->nr_colunas; j++){  
-			
-			
-			for(int i = 0; i < m1->nr_linhas; i++){
-				
-				double v = soma_mult (paux1, paux2, m1, m2);
-				set_no(m3, i, j, v);
-				paux2 = m2->inicio->prox_linha;   // passa para a proxima linha
-			    a = i;
-				while(a >= 0){
-					paux2 = paux2->prox_linha;  // reposiciona a linha de referencia
-					a--;
-				}
-			}
-			b = j;
-			paux1 = m1->inicio->prox_coluna;
-			while(b >= 0){
-				paux1 = paux1->prox_coluna; // reposiocina a coluna de referencia
-				b--;
-			}
-		}
-		
-		return m3;
+
+	MATRIZ_ESPARSA *m3 = criar_matriz(m1->nr_linhas, m2->nr_colunas); // cria a matriz q sera gereda pel multiplicaçao
+	NO *paux0, *paux1, *paux2;
+	paux1 = m1->inicio->prox_coluna;
+	paux2 = m2->inicio->prox_linha;
+	int a, b;
 	
+	
+	for(int j = 0; j < m2->nr_colunas; j++) {  
+		for(int i = 0; i < m1->nr_linhas; i++) {
+			
+			double v = soma_mult (paux1, paux2, m1, m2);
+			set_valor(m3, i + 1, j + 1, v);
+			paux2 = paux2->prox_linha;   // passa para a proxima linha
+		}
+		paux1 = paux1->prox_coluna;
 	}
+	return m3;
 }
-*/
+
 
 
 

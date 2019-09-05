@@ -274,34 +274,15 @@ MATRIZ_ESPARSA *somar_matriz(MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2) {
 }
 
 
-/*
+/* IDEIA (TODO): criar vetores com os valores da coluna (linha) da matriz m1 (m2).
+ * Depois basta multiplicar os valores de mesma posição e somar, retornando este valor
+ */
 double soma_mult(NO *p_aux1, NO *p_aux2, MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2)
 {
-	double x = 0;
-
-	while(p_aux1->coluna < m1->nr_colunas && p_aux2->linha < m2->nr_linhas){ // checa se ainda esta na linha e coluna da multiplicaçao
-		if(p_aux1->prox_coluna->coluna==p_aux2->prox_linha->linha){  // se linha e coluna for a mesma o valor eh a multiplicacao delas
-			x=x+(p_aux1->prox_coluna->valor)*(p_aux2->prox_linha->valor);
-			p_aux2=p_aux2->prox_linha;
-		}
-			
-		if(p_aux1->prox_coluna->coluna<p_aux2->prox_linha->linha){ // se a linha e coluna n for igual uma delas eh 0, logo o valor eh zero
-			x=x+0;
-			p_aux1=p_aux1->prox_coluna;
-			return x;
-		}
-			
-		
-		if (p_aux2->prox_linha->linha<p_aux1->prox_coluna->coluna){ // se a linha e coluna n for igual uma delas eh 0, logo o valor eh zero
-			x = x + 0;
-			p_aux2 = p_aux2->prox_linha;
-			return x;
-		}
-			
-	}
-
+	double *coluna = vectorify_col(p_aux1, m1);
+	double *linha = vectorify_lin(p_aux2, m2);
 }
-*/
+
 
 MATRIZ_ESPARSA *multiplicar_matriz (MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2){
 	if(m1->nr_colunas != m2->nr_linhas){

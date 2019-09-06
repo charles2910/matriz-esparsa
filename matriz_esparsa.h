@@ -26,7 +26,9 @@ void print_valor (MATRIZ_ESPARSA *matriz, int linha, int coluna);  //FUNCIONANDO
 
 MATRIZ_ESPARSA *somar_matriz (MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2);  //FUNCIONANDO
 MATRIZ_ESPARSA *multiplicar_matriz (MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2);
-double soma_mult(NO *p_aux1, NO *p_aux2, NO *m1, NO *m2); 
+double soma_mult(int linha, int coluna, MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2); 
+double *vectorify(MATRIZ_ESPARSA *matriz, int linha, int coluna);
+double soma_vetor(double *vetor, int tamanho);
 MATRIZ_ESPARSA *transposta_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO
 double determinante_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO ateh ordem 4
 

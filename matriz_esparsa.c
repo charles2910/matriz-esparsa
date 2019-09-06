@@ -274,6 +274,10 @@ MATRIZ_ESPARSA *somar_matriz(MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2) {
 }
 
 
+/*
+ * Transforma uma linha ou coluna da matriz esparsa em um vetor, retornando 
+ * este vetor criado.
+ */
 double *vectorify(MATRIZ_ESPARSA *matriz, int linha, int coluna) {
 	if (matriz == NULL)	
 		return NULL;
@@ -290,6 +294,10 @@ double *vectorify(MATRIZ_ESPARSA *matriz, int linha, int coluna) {
 	return vetor;
 }
 
+
+/*
+ * Efetua a soma de todos os valores de um vetor, retornando-o.
+ */
 double soma_vetor(double *vetor, int tamanho) {
 	if (vetor == NULL)
 		return -1;
@@ -300,8 +308,9 @@ double soma_vetor(double *vetor, int tamanho) {
 }
 
 
-/* IDEIA (TODO): criar vetores com os valores da coluna (linha) da matriz m1 (m2).
- * Depois basta multiplicar os valores de mesma posição e somar, retornando este valor
+/* 
+ * Faz a soma final entre os elementos multiplicados de linha por coluna, 
+ * retornando o valor final do elemento da matiz já multiplicada.
  */
 double soma_mult(int linha, int coluna, MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2)
 {

@@ -35,6 +35,4 @@ double determinante_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO ateh ordem 4
 void print_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO
 void resumo_matriz (MATRIZ_ESPARSA *matriz);  //FUNCIONANDO
 
-MATRIZ_ESPARSA *ler_matriz (const char nome[]);
-
 #endif

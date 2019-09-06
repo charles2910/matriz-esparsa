@@ -274,13 +274,45 @@ MATRIZ_ESPARSA *somar_matriz(MATRIZ_ESPARSA *s1, MATRIZ_ESPARSA *s2) {
 }
 
 
+double *vectorify(MATRIZ_ESPARSA *matriz, int linha, int coluna) {
+	if (matriz == NULL)	
+		return NULL;
+	double *vetor;
+	if (linha == 0) {
+		vetor = calloc(sizeof(double), matriz->nr_linhas);
+		for (int i = 0; i < matriz->nr_linhas; i++)
+			vetor[i] = get_valor(matriz, i + 1, coluna);
+	} else {
+		vetor = calloc(sizeof(double), matriz->nr_colunas);
+		for (int j = 0; j < matriz->nr_colunas; j++)
+			vetor[j] = get_valor(matriz, linha, j + 1);
+	}
+	return vetor;
+}
+
+double soma_vetor(double *vetor, int tamanho) {
+	if (vetor == NULL)
+		return -1;
+	double soma = 0;
+	for (int i = 0; i < tamanho; i++)
+		soma += vetor[i];
+	return soma;
+}
+
+
 /* IDEIA (TODO): criar vetores com os valores da coluna (linha) da matriz m1 (m2).
  * Depois basta multiplicar os valores de mesma posição e somar, retornando este valor
  */
-double soma_mult(NO *p_aux1, NO *p_aux2, MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2)
+double soma_mult(int linha, int coluna, MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2)
 {
-	double *coluna = vectorify_col(p_aux1, m1);
-	double *linha = vectorify_lin(p_aux2, m2);
+	double *col = vectorify(m1, 0, coluna);
+	double *lin = vectorify(m2, linha, 0);
+	for (int i = 0; i < m1->nr_colunas; i++)
+		lin[i] = lin[i] * col[i];
+	double soma = soma_vetor(lin, m1->nr_colunas);
+	free(lin);
+	free(col);
+	return soma;
 }
 
 
@@ -290,21 +322,14 @@ MATRIZ_ESPARSA *multiplicar_matriz (MATRIZ_ESPARSA *m1, MATRIZ_ESPARSA *m2){
 		return NULL;
 	}
 
-	MATRIZ_ESPARSA *m3 = criar_matriz(m1->nr_linhas, m2->nr_colunas); // cria a matriz q sera gereda pel multiplicaçao
-	NO *paux0, *paux1, *paux2;
-	paux1 = m1->inicio->prox_coluna;
-	paux2 = m2->inicio->prox_linha;
-	int a, b;
-	
+	MATRIZ_ESPARSA *m3 = criar_matriz(m1->nr_linhas, m2->nr_colunas); // cria a matriz q sera gereda pel multiplicaçao	
 	
 	for(int j = 0; j < m2->nr_colunas; j++) {  
 		for(int i = 0; i < m1->nr_linhas; i++) {
 			
-			double v = soma_mult (paux1, paux2, m1, m2);
+			double v = soma_mult (i + 1, j + 1, m1, m2);
 			set_valor(m3, i + 1, j + 1, v);
-			paux2 = paux2->prox_linha;   // passa para a proxima linha
 		}
-		paux1 = paux1->prox_coluna;
 	}
 	return m3;
 }
